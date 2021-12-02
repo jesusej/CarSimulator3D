@@ -94,7 +94,7 @@ class TrafficModel(ap.Model):
         d = self.d = int(self.p.density * (w * h))
         n = self.n = self.p.n_agents
         semaforos = 4
-        cars = 6
+        cars = 5
 
         self.TIME_LIMIT = 4
         self.time = 0
@@ -108,7 +108,7 @@ class TrafficModel(ap.Model):
         self.semaforoAgents = ap.AgentList(self, semaforos, SemaforoAG)
 
         self.grid.add_agents(self.semaforoAgents, positions = tuple( [(5,4), (7,5), (4,6), (6,7)] ), empty=False, random=True)
-        self.grid.add_agents(self.carAgents, positions = tuple( [(5,3), (0,6), (11,5), (6,11), (5,1), (2,6)] ), empty=True, random=False)
+        self.grid.add_agents(self.carAgents, positions = tuple( [(6,3), (0,6), (11,5), (6,11), (5,1)] ), empty=True, random=False)
         #self.grid.add_agents(self.carAgents, positions = tuple( [(0,6), (2,6)] ), empty=True, random=False)
         
         for semaforo in self.semaforoAgents:
@@ -157,9 +157,12 @@ class TrafficModel(ap.Model):
         self.time = 0
       else:
         self.time += 1
+    
+    
 
     def step(self):
 
+      self.changeTrafficLight()
     
       for agent in self.allRobots:
         self.posCar = posCar = self.grid.positions[agent]
@@ -169,7 +172,7 @@ class TrafficModel(ap.Model):
         if (nearTrafficLight != None):
           if(nearTrafficLight.typeColor == 2):
             agent.stopped = True
-            print("Car: ", agent.id, " at: ", self.num_moves, " is Stopped 'cause traffic light")
+            #print("Car: ", agent.id, " at: ", self.num_moves, " is Stopped 'cause traffic light")
           else:
             agent.stopped = False
         
@@ -180,42 +183,42 @@ class TrafficModel(ap.Model):
         
 
         if (not agent.stopped):
+          agent.turning = 0
           # While car is in position (6, 5) move randomly left or up
           if posCar == (6,5) and agent.turn() == 0:
-            agent.move_left(self.posCar, self.num_moves)
+            agent.move_up(self.posCar, self.num_moves)
             # print(self.num_moves ,posCar,agent.turn())
           elif posCar == (6,5) and agent.turn() == 1 and agent.turning == 0:
             agent.turning = 1
-            agent.move_up(self.posCar, self.num_moves)
+            agent.move_left(self.posCar, self.num_moves)
             # print(self.num_moves ,posCar,agent.turn())
 
           # While car is in position (6, 6) move randomly left or down
           elif posCar == (6,6) and agent.turn() == 0:
-            agent.move_down(self.posCar, self.num_moves)
+            agent.move_left(self.posCar, self.num_moves)
             # print(self.num_moves ,posCar,agent.turn())
           elif posCar == (6,6) and agent.turn() == 1 and agent.turning == 0:
             agent.turning = 1
-            agent.move_left(self.posCar, self.num_moves)  
+            agent.move_down(self.posCar, self.num_moves)  
             # print(self.num_moves ,posCar,agent.turn())
           
           # While car is in position (5, 5) move randomly right or up
           elif posCar == (5,5) and agent.turn() == 1 and agent.turning == 0:
             agent.turning = 1
             agent.move_up(self.posCar, self.num_moves)
-            # print(self.num_moves ,posCar,agent.turn())
-          elif posCar == (5,5) and agent.turn() == 0 and agent.turning == 0:
-            agent.turning = 1
+            #print(self.num_moves ,posCar,agent.turn())
+          elif posCar == (5,5) and agent.turn() == 0:
             agent.move_right(self.posCar, self.num_moves)
-            # print(self.num_moves ,posCar,agent.turn())
+            #print(self.num_moves ,posCar,agent.turn())
           
           # While car is in position (5, 6) move randomly right or down
-          elif posCar == (5,6) and agent.turn() == 1:
-            agent.move_right(self.posCar, self.num_moves)
-            # print(self.num_moves ,posCar,agent.turn())
-          elif posCar == (5,6) and agent.turn() == 0 and agent.turning == 0:
-            agent.turning = 1
+          elif posCar == (5,6) and agent.turn() == 0:
             agent.move_down(self.posCar, self.num_moves)
             # print(self.num_moves ,posCar,agent.turn())
+          elif posCar == (5,6) and agent.turn() == 1 and agent.turning == 0:
+            agent.turning = 1
+            agent.move_right(self.posCar, self.num_moves)
+            #print(self.num_moves ,posCar,agent.turn())
 
           # While car is in position is in road move right, down, up or left
 
@@ -235,7 +238,7 @@ class TrafficModel(ap.Model):
             agent.move_left(self.posCar, self.num_moves)
   
         
-      self.changeTrafficLight()
+      
       # self.num_moves += self.p.n_agents
       self.num_moves += 1
       # print(self.num_moves)
@@ -243,9 +246,9 @@ class TrafficModel(ap.Model):
 parameters = {
     'n_agents': 4, 
     'density': 0.3, # Density of population
-    'height': 12,
-    'width': 12,
-    'steps': 60  # Maximum number of steps
+    'height': 20,
+    'width': 20,
+    'steps': 200  # Maximum number of steps
     }
 
 def animation_plot(model, ax):
@@ -260,6 +263,3 @@ fig, ax = plt.subplots()
 model = TrafficModel(parameters)
 animation = ap.animate(model, fig, ax, animation_plot)
 IPython.display.HTML(animation.to_jshtml())
-
-from sys import version
-print(version)
