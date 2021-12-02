@@ -1,6 +1,6 @@
 Include
 Lib
-Scripts
+server/Scripts
 pyvenv.cfg
 share
 __pycache__
