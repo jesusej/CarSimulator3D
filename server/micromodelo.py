@@ -15,15 +15,12 @@ Elaborado por:
 # Model design
 import agentpy as ap
 
-# Visualization
-import matplotlib.pyplot as plt
-import seaborn as sns
-import IPython
-from random import randrange, uniform
-from matplotlib.animation import FuncAnimation
-
 # Json Library
 import json
+
+# Misc.
+from random import randrange, uniform
+
 
 class CarAG(ap.Agent):
 
@@ -269,8 +266,6 @@ def animation_plot(model, ax):
     gridPosition = model.grid.attr_grid('typeColor')
     color_dict = {0:'#687068', 1:'#43f00a', 2:'#f00a0a', 3:'#2be809', 4:'#26d7ff', 5:'#b05f13', 6:'#00420e', 7:'#ffe926', None:'#ffffff'}
     ap.gridplot(gridPosition, ax=ax, color_dict=color_dict, convert=True)
-    total = model.p.height * model.p.width
-    percent = (total - model.d) * 100 / (total)
     ax.set_title(f"Traffic model \n Time-step: {model.t}, # of Moves: {model.num_moves}")
 
 def redefineTrafficLights(trafficLights):
@@ -331,20 +326,18 @@ def redefineCarResults(carResults):
 
   return carResults
 
-fig, ax = plt.subplots()
-model = TrafficModel(parameters)
-results = model.run()
+def createJson():
+  model = TrafficModel(parameters)
+  results = model.run()
 
-carResults = results['variables']['CarAG'].to_dict()
-trafficLights = results['variables']['SemaforoAG'].to_dict()
+  carResults = results['variables']['CarAG'].to_dict()
+  trafficLights = results['variables']['SemaforoAG'].to_dict()
 
-trafficLights = redefineTrafficLights(trafficLights)
-carResults = redefineCarResults(carResults)
+  trafficLights = redefineTrafficLights(trafficLights)
+  carResults = redefineCarResults(carResults)
 
-finalDict = {'trafficLights': trafficLights, 'carResults': carResults}
+  finalDict = {'trafficLights': trafficLights, 'carResults': carResults}
 
-finalJson = json.dumps(finalDict, indent = 4)
-print(finalJson)
+  finalJson = json.dumps(finalDict, indent = 4)
 
-#animation = ap.animate(model, fig, ax, animation_plot)
-#IPython.display.HTML(animation.to_jshtml())
+  return finalJson
