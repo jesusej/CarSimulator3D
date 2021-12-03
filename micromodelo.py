@@ -21,6 +21,7 @@ import json
 # Misc.
 from random import randrange, uniform
 
+dictToSend = {'Cars': []}
 
 class CarAG(ap.Agent):
 
@@ -108,13 +109,20 @@ class TrafficModel(ap.Model):
         self.grid.add_agents(self.carAgents, positions = tuple( [(6,3), (0,6), (11,5), (6,11), (5,1)] ), empty=True, random=False)
         #self.grid.add_agents(self.carAgents, positions = tuple( [(0,6), (2,6)] ), empty=True, random=False)
 
+        dictToSend['length'] = len(self.carAgents)
+
         for car in self.carAgents:
-          car.record('posCar', self.grid.positions[car])
+          dictToSend["Cars"].append({ 
+              "CarId": car.id,
+              "Position": {
+                "x": self.grid.positions[car][0],
+                "y": 0,
+                "z": self.grid.positions[car][1]
+              }
+         })
         
         for semaforo in self.semaforoAgents:
           self.posSem = posSem = self.grid.positions[semaforo]
-
-          semaforo.record('posSem', posSem)
 
           if posSem == (5,4) or posSem == (6,7):
             semaforo.typeColor = 1
@@ -123,8 +131,6 @@ class TrafficModel(ap.Model):
             semaforo.typeColor = 2
             print(semaforo)
           
-          semaforo.record('typeColor')
-
     def update(self):
         # 
         self.allRobots = self.carAgents.select(self.carAgents.id > 0)
@@ -156,7 +162,6 @@ class TrafficModel(ap.Model):
       if self.time == self.TIME_LIMIT:
         for semaforo in self.semaforoAgents:
           semaforo.semaforo()
-          semaforo.record('typeColor')
         
         self.time = 0
       else:
@@ -165,8 +170,6 @@ class TrafficModel(ap.Model):
     
 
     def step(self):
-
-      self.record('num_moves')
       self.changeTrafficLight()
     
       for agent in self.allRobots:
@@ -242,8 +245,14 @@ class TrafficModel(ap.Model):
           elif posCar[0] == 6 and (posCar != (6, 6) or posCar != (6, 5)):
             agent.move_left(self.posCar, self.num_moves)
   
-        
-        agent.record('posCar', posCar)
+        dictToSend["Cars"].append({ 
+              "CarId": agent.id,
+              "Position": {
+                "x": posCar[0],
+                "y": 0,
+                "z": posCar[1]
+              }
+         })
 
       # self.num_moves += self.p.n_agents
       self.num_moves += 1
@@ -264,73 +273,8 @@ def animation_plot(model, ax):
     ap.gridplot(gridPosition, ax=ax, color_dict=color_dict, convert=True)
     ax.set_title(f"Traffic model \n Time-step: {model.t}, # of Moves: {model.num_moves}")
 
-def redefineTrafficLights(trafficLights):
-  posSem = {}
-  idList = []
-  for i in trafficLights['posSem']:
-    if trafficLights['posSem'][i] != None:
-      id = i[0]
-      posSem[id] = trafficLights['posSem'][i]
-      idList.append(id)
-
-  #trafficLights['posSem'] = posSem
-
-  colorKey = [[] for i in idList]
-  colorValues = [[] for i in idList]
-  id = 0
-  j = -1
-  for i in trafficLights['typeColor']:
-    if (id != i[0]):
-      id = i[0]
-      j += 1
-    colorKey[j].append(i[1])
-    colorValues[j].append(trafficLights['typeColor'][i])
-
-  typeColor = {}
-  for i in range(len(idList)):
-    zipIterator = zip(colorKey[i], colorValues[i])
-    typeColor[idList[i]] = dict(zipIterator)
-
-  trafficLights = typeColor
-
-  return trafficLights
-
-def redefineCarResults(carResults):
-  idList = []
-  keyList = []
-  valuesList = []
-  id = 0
-  j = -1
-  for i in carResults['posCar']:
-    if i[0] != id:
-      id = i[0]
-      idList.append(id)
-      keyList.append([])
-      valuesList.append([])
-      j += 1
-
-    keyList[j].append(i[1])
-    valuesList[j].append(carResults['posCar'][i]) 
-  
-  posCar = {}
-  for i in range(len(idList)):
-    zipIterator = zip(keyList[i], valuesList[i])
-    posCar[idList[i]] = dict(zipIterator)
-  
-  carResults['posCar'] = posCar
-
-  return carResults
-
 def createJson():
   model = TrafficModel(parameters)
-  results = model.run()
+  model.run()
 
-  carResults = results['variables']['CarAG'].to_dict()
-  trafficLights = results['variables']['SemaforoAG'].to_dict()
-
-  trafficLights = redefineTrafficLights(trafficLights)
-  carResults = redefineCarResults(carResults)
-
-  finalDict = {'carResults': carResults}
-
-  return finalDict
+  return dictToSend
