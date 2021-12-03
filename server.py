@@ -9,12 +9,15 @@
 # Example of a Python UDP server
 
 import UdpComms as U
+import os
 import time
 import json
 from micromodelo import createJson
 
+port = int(os.getenv('PORT', 8000))
+
 # Create UDP socket to use for sending (and receiving)
-sock = U.UdpComms(udpIP="127.0.0.1", portTX=8000, portRX=8001, enableRX=True, suppressWarnings=True)
+sock = U.UdpComms(udpIP="127.0.0.1", portTX=port, portRX=port, enableRX=True, suppressWarnings=True)
 
 i = 0
 
