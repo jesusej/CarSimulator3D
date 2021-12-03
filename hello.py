@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 import json, logging, os, atexit
 
+from micromodelo import createJson
+
 app = Flask(__name__, static_url_path='')
 
 # On IBM Cloud Cloud Foundry, get the port number from the environment variable PORT
@@ -10,7 +12,7 @@ port = int(os.getenv('PORT', 8000))
 
 @app.route('/')
 def root():
-    return jsonify([{"message":"Pruebas Tec, from IBM Cloud!"}])
+    return jsonify([createJson()])
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port, debug=True)

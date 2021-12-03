@@ -333,6 +333,4 @@ def createJson():
 
   finalDict = {'carResults': carResults}
 
-  finalJson = json.dumps(finalDict, indent = 4)
-
-  return finalJson
+  return finalDict
