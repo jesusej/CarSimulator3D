@@ -244,10 +244,6 @@ class TrafficModel(ap.Model):
   
         
         agent.record('posCar', posCar)
-        #self.record('posCar')
-        #self.record('agent.stopped')
-        #self.record('agent.direction')
-        #self.record('agent.turning')
 
       # self.num_moves += self.p.n_agents
       self.num_moves += 1
@@ -259,7 +255,7 @@ parameters = {
     'density': 0.3, # Density of population
     'height': 20,
     'width': 20,
-    'steps': 200  # Maximum number of steps
+    'steps': 100  # Maximum number of steps
     }
 
 def animation_plot(model, ax):
@@ -277,8 +273,7 @@ def redefineTrafficLights(trafficLights):
       posSem[id] = trafficLights['posSem'][i]
       idList.append(id)
 
-
-  trafficLights['posSem'] = posSem
+  #trafficLights['posSem'] = posSem
 
   colorKey = [[] for i in idList]
   colorValues = [[] for i in idList]
@@ -296,7 +291,7 @@ def redefineTrafficLights(trafficLights):
     zipIterator = zip(colorKey[i], colorValues[i])
     typeColor[idList[i]] = dict(zipIterator)
 
-  trafficLights['typeColor'] = typeColor
+  trafficLights = typeColor
 
   return trafficLights
 
@@ -336,7 +331,7 @@ def createJson():
   trafficLights = redefineTrafficLights(trafficLights)
   carResults = redefineCarResults(carResults)
 
-  finalDict = {'trafficLights': trafficLights, 'carResults': carResults}
+  finalDict = {'carResults': carResults}
 
   finalJson = json.dumps(finalDict, indent = 4)
 
