@@ -1,4 +1,4 @@
 ---
 applications:
- - name: car-simulator
+ - name: car-sim
    random-route: true
