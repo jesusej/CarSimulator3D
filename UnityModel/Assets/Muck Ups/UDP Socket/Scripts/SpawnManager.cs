@@ -18,10 +18,10 @@ public class SpawnManager : MonoBehaviour
     IEnumerator Animate(InfoAgents agents) {
         int steps = (agents.Cars.Count) / agents.length;
         
-        for (int i = 0; i < steps; i++){
+         for (int i = 0; i < steps; i++){
             UpdateAgents(agents);
             yield return new WaitForSeconds(wait);     
-        }
+         }
         
     }
 
@@ -45,6 +45,7 @@ public class SpawnManager : MonoBehaviour
         _agents = agents;
 
         // Ejemplo de buscar por id.
+         
         for (int i = 0; i < agents.length; i++)
         {
             // Poner atenci�n en la interpretaci�n del orden de las coordenadas de python (X,Y) y de Unity (X,Y,Z),
@@ -56,5 +57,6 @@ public class SpawnManager : MonoBehaviour
             car.SetTargetPosition(newPosition);
             actual++;
         }
+        
     }
 }

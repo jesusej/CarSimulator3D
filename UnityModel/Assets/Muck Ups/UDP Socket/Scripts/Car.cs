@@ -10,8 +10,10 @@ public class Car : MonoBehaviour
 
     void Update()
     {
-        // Con los ejercicios anteriores, buscar la manera de mejorar el smooth de posición y giro.
-        transform.position = Vector3.Lerp(transform.position, targetPosion, Time.deltaTime * speed);
+        // Con los ejercicios anteriores, buscar la manera de mejorar el smooth de posiciï¿½n y giro.
+        //
+        
+            transform.position = Vector3.Lerp(transform.position, targetPosion, Time.deltaTime * speed);
     }
 
     public void SetTargetPosition(Vector3 position)
