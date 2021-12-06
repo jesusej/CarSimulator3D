@@ -135,7 +135,7 @@ public class UdpSocket : MonoBehaviour
     }
 
 }
-
+/*
 [Serializable]
 public class InfoAgents
 {
@@ -156,3 +156,4 @@ public class InfoPosition
     public float y;
     public float z;
 }
+*/

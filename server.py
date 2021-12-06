@@ -23,7 +23,7 @@ i = 0
 
 while True:
     jsonString = createJson()
-    sock.SendJsonData(jsonString.encode()) # Send this string to other application str(i)
+    #sock.SendJsonData(jsonString.encode()) # Send this string to other application str(i)
     i += 1
 
     data = sock.ReadReceivedData() # read data
